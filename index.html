@@ -15,12 +15,12 @@
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 2px 14px}h1{font-size:22px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:4px}
 button{font:inherit;border:0;color:inherit;cursor:pointer}.action{background:#30384a;border:1px solid #48536a;border-radius:12px;padding:10px 13px;font-weight:650}.primary{background:#4f73e8;border-color:#4f73e8}
 .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-#pad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
-.padbtn{position:relative;min-height:112px;border:2px solid #ffffff22;border-radius:18px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;overflow:hidden;touch-action:pan-y;user-select:none;box-shadow:0 5px 16px #0003}
-.padbtn:active{filter:brightness(1.25);transform:scale(.97)}.padbtn .name{font-size:14px;font-weight:750;line-height:1.2;text-align:center;overflow-wrap:anywhere}.padbtn .hint{font-size:10px;opacity:.75}
-.padbtn .mini{position:absolute;right:7px;top:6px;background:#0005;border-radius:8px;padding:3px 6px;font-size:10px}
+#pad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 9px;align-items:start}
+.padbtn{position:relative;min-height:138px;border:2px solid #ffffff22;border-radius:18px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;overflow:hidden;touch-action:pan-y;user-select:none;box-shadow:0 5px 16px #0003}
+.padbtn:active{filter:brightness(1.25);transform:scale(.97)}.padbtn .name{font-size:15px;font-weight:750;line-height:1.25;text-align:center;overflow-wrap:anywhere}.padbtn .hint{font-size:11px;opacity:.8}
+.padbtn .mini{position:absolute;right:7px;top:6px;background:#0005;border-radius:8px;padding:4px 7px;font-size:10px}
 .padbtn.editing{outline:2px dashed #fff;outline-offset:2px}
-.padwrap{display:flex;flex-direction:column;gap:6px;min-width:0}.padcontrols{display:flex;gap:5px}.padcontrols button{flex:1;min-width:0;background:#252b39;border:1px solid #41495b;border-radius:9px;padding:7px 3px;font-size:11px}.padcontrols button.active{background:#4f73e8;border-color:#7892f0}.volrow{display:flex;align-items:center;gap:9px}.volrow input{padding:0;border:0;background:transparent}.volrow span{font-size:12px;min-width:38px;text-align:right}
+.padwrap{display:flex;flex-direction:column;gap:9px;min-width:0}.padcontrols{display:flex;gap:7px}.padcontrols button{flex:1;min-width:0;min-height:44px;background:#252b39;border:1px solid #515d75;border-radius:11px;padding:9px 3px;font-size:12px;font-weight:700;white-space:nowrap}.padcontrols button.active{background:#4f73e8;border-color:#7892f0}.tile-volume{display:grid;grid-template-columns:1fr auto;align-items:center;gap:3px 7px;padding:7px 8px;background:#1b1f2a;border:1px solid #343b4b;border-radius:11px}.tile-volume label{font-size:11px;color:#c5ccda}.tile-volume output{font-size:11px;color:#fff;min-width:34px;text-align:right;font-variant-numeric:tabular-nums}.tile-volume input{grid-column:1/-1;width:100%;height:28px;margin:0;padding:0;border:0;background:transparent;accent-color:#7892f0;touch-action:pan-y}.volrow{display:flex;align-items:center;gap:9px}.volrow input{padding:0;border:0;background:transparent}.volrow span{font-size:12px;min-width:38px;text-align:right}
 .empty{border:1px dashed var(--line);border-radius:16px;padding:30px 18px;text-align:center;color:var(--muted);grid-column:1/-1;line-height:1.7}
 .note{font-size:12px;color:var(--muted);line-height:1.6;margin:14px 2px}
 #status{font-size:12px;color:#aeb9d0;min-height:18px;margin:8px 2px}
@@ -43,6 +43,7 @@ input,select{width:100%;border:1px solid #41495b;border-radius:10px;background:#
 <div id="pad"><div class="empty">「＋ 音声追加」から音声ファイルを選ぶと<br>ここに再生ボタンが作られます。</div></div>
 <div id="status"></div>
 <p class="note">音声はこの端末のブラウザ内に保存されます。複数のボタンを続けて押すと音声を重ねて再生できます。編集モードではボタンを長押しして並び替えできます。</p>
+
 <dialog id="editDialog">
 <h2>ボタンの設定</h2>
 <div class="field"><label for="nameInput">表示名</label><input id="nameInput" maxlength="40"></div>
@@ -51,6 +52,7 @@ input,select{width:100%;border:1px solid #41495b;border-radius:10px;background:#
 <div class="field"><label for="sizeInput">ボタンの大きさ</label><select id="sizeInput"><option value="normal">標準</option><option value="large">大きめ</option><option value="small">小さめ</option></select></div>
 <div class="dialog-actions"><button class="action" id="deleteBtn">削除</button><button class="action" id="cancelEdit">キャンセル</button><button class="action primary" id="saveEdit">保存</button></div>
 </dialog>
+
 <script>
 const DB_NAME='soundpad-db', STORE='sounds';
 let db, sounds=[], editMode=false, editingId=null, playing=new Map(), looping=new Set();
@@ -67,11 +69,20 @@ function render(){
  sounds.forEach((s)=>{
   const wrap=document.createElement('div');wrap.className='padwrap';wrap.style.gridColumn=s.size==='large'?'span 2':'span 1';
   const b=document.createElement('button');b.className='padbtn'+(editMode?' editing':'');
-  b.style.background=s.color||'#526fe5';b.style.width='100%';b.style.minHeight=s.size==='small'?'82px':s.size==='large'?'150px':'112px';
+  b.style.background=s.color||'#526fe5';b.style.width='100%';b.style.minHeight=s.size==='small'?'112px':s.size==='large'?'168px':'138px';
   b.innerHTML=`<span class="mini">${editMode?'編集':'▶'}</span><span class="name"></span><span class="hint"></span>`;
   b.querySelector('.name').textContent=s.name;b.querySelector('.hint').textContent=editMode?'タップして設定':'タップで再生';
   b.addEventListener('click',()=>editMode?openEdit(s.id):play(s,false));wrap.appendChild(b);
   if(!editMode){
+   // 音量バーを独立した段に配置し、ループ・停止ボタンと重ならないようにする
+   const volumeBox=document.createElement('div');volumeBox.className='tile-volume';
+   const volumeLabel=document.createElement('label');volumeLabel.textContent='音量';
+   const volumeOutput=document.createElement('output');volumeOutput.textContent=(s.volume??100)+'%';
+   const volumeSlider=document.createElement('input');volumeSlider.type='range';volumeSlider.min='0';volumeSlider.max='100';volumeSlider.step='1';volumeSlider.value=s.volume??100;volumeSlider.setAttribute('aria-label',s.name+'の音量');
+   volumeSlider.addEventListener('click',e=>e.stopPropagation());
+   volumeSlider.addEventListener('input',()=>{const v=Number(volumeSlider.value);s.volume=v;volumeOutput.textContent=v+'%';const active=playing.get(s.id);if(active)for(const a of active)a.volume=v/100;});
+   volumeSlider.addEventListener('change',()=>dbPut(s).catch(()=>{}));
+   volumeBox.append(volumeLabel,volumeOutput,volumeSlider);wrap.appendChild(volumeBox);
    const controls=document.createElement('div');controls.className='padcontrols';
    const loop=document.createElement('button');loop.textContent=looping.has(s.id)?'🔁 ループ中':'🔁 ループ';loop.className=looping.has(s.id)?'active':'';
    loop.onclick=()=>{if(looping.has(s.id)){stopSound(s.id);looping.delete(s.id)}else{looping.add(s.id);play(s,true)}render()};
