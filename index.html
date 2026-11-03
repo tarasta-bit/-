@@ -11,122 +11,421 @@
 <title>Sound Pad</title>
 <style>
 :root{color-scheme:dark;--bg:#101218;--panel:#1b1f2a;--muted:#aab1c2;--line:#343b4b}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f7f8fb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 14px calc(20px + env(safe-area-inset-bottom))}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 2px 14px}h1{font-size:22px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:4px}
-button{font:inherit;border:0;color:inherit;cursor:pointer}.action{background:#30384a;border:1px solid #48536a;border-radius:12px;padding:10px 13px;font-weight:650}.primary{background:#4f73e8;border-color:#4f73e8}
-.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-#pad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 9px;align-items:start}
-.padbtn{position:relative;min-height:138px;border:2px solid #ffffff22;border-radius:18px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;overflow:hidden;touch-action:pan-y;user-select:none;box-shadow:0 5px 16px #0003}
-.padbtn:active{filter:brightness(1.25);transform:scale(.97)}.padbtn .name{font-size:15px;font-weight:750;line-height:1.25;text-align:center;overflow-wrap:anywhere}.padbtn .hint{font-size:11px;opacity:.8}
-.padbtn .mini{position:absolute;right:7px;top:6px;background:#0005;border-radius:8px;padding:4px 7px;font-size:10px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#f7f8fb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 14px calc(20px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 2px 14px}
+h1{font-size:22px;margin:0}
+.sub{font-size:12px;color:var(--muted);margin-top:4px}
+button{font:inherit;border:0;color:inherit;cursor:pointer;touch-action:manipulation}
+.action{background:#30384a;border:1px solid #48536a;border-radius:12px;padding:11px 14px;font-weight:650}
+.primary{background:#4f73e8;border-color:#4f73e8}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+#pad{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px;align-items:start}
+.padwrap{display:flex;flex-direction:column;gap:9px;min-width:0}
+.padbtn{position:relative;width:100%;min-height:145px;border:2px solid #ffffff22;border-radius:18px;padding:14px 9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;overflow:hidden;user-select:none;box-shadow:0 5px 16px #0003}
+.padbtn:active{filter:brightness(1.2);transform:scale(.98)}
+.padbtn .name{font-size:16px;font-weight:750;line-height:1.3;text-align:center;overflow-wrap:anywhere}
+.padbtn .hint{font-size:11px;opacity:.8}
+.padbtn .mini{position:absolute;right:8px;top:8px;background:#0005;border-radius:8px;padding:4px 7px;font-size:11px}
 .padbtn.editing{outline:2px dashed #fff;outline-offset:2px}
-.padwrap{display:flex;flex-direction:column;gap:9px;min-width:0}.padcontrols{display:flex;gap:7px}.padcontrols button{flex:1;min-width:0;min-height:44px;background:#252b39;border:1px solid #515d75;border-radius:11px;padding:9px 3px;font-size:12px;font-weight:700;white-space:nowrap}.padcontrols button.active{background:#4f73e8;border-color:#7892f0}.tile-volume{display:grid;grid-template-columns:1fr auto;align-items:center;gap:3px 7px;padding:7px 8px;background:#1b1f2a;border:1px solid #343b4b;border-radius:11px}.tile-volume label{font-size:11px;color:#c5ccda}.tile-volume output{font-size:11px;color:#fff;min-width:34px;text-align:right;font-variant-numeric:tabular-nums}.tile-volume input{grid-column:1/-1;width:100%;height:28px;margin:0;padding:0;border:0;background:transparent;accent-color:#7892f0;touch-action:pan-y}.volrow{display:flex;align-items:center;gap:9px}.volrow input{padding:0;border:0;background:transparent}.volrow span{font-size:12px;min-width:38px;text-align:right}
+.padcontrols{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.padcontrols button{height:48px;background:#252b39;border:1px solid #41495b;border-radius:12px;padding:6px 3px;font-size:14px;font-weight:650}
+.padcontrols button.active{background:#4f73e8;border-color:#7892f0}
+.volume-box{background:#1b1f2a;border:1px solid #343b4b;border-radius:12px;padding:9px 11px}
+.volume-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#d9deeb;margin-bottom:5px}
+.volume-head span:last-child{font-variant-numeric:tabular-nums;color:#aab1c2}
+.volume-box input{display:block;width:100%;height:28px;margin:0;accent-color:#7390ff;cursor:pointer}
 .empty{border:1px dashed var(--line);border-radius:16px;padding:30px 18px;text-align:center;color:var(--muted);grid-column:1/-1;line-height:1.7}
-.note{font-size:12px;color:var(--muted);line-height:1.6;margin:14px 2px}
+.note{font-size:12px;color:var(--muted);line-height:1.6;margin:16px 2px}
 #status{font-size:12px;color:#aeb9d0;min-height:18px;margin:8px 2px}
 dialog{width:min(440px,calc(100% - 24px));border:1px solid var(--line);border-radius:18px;background:#1b1f2a;color:#f7f8fb;padding:18px;box-shadow:0 20px 80px #0009}
-dialog::backdrop{background:#0009}dialog h2{font-size:18px;margin:0 0 14px}
-.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:12px;color:var(--muted)}
+dialog::backdrop{background:#0009}
+dialog h2{font-size:18px;margin:0 0 14px}
+.field{display:grid;gap:6px;margin:12px 0}
+.field label{font-size:12px;color:var(--muted)}
 input,select{width:100%;border:1px solid #41495b;border-radius:10px;background:#10141d;color:white;padding:11px;font:inherit}
-.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-#fileInput{display:none}.small{font-size:11px;color:var(--muted)}
+input[type=color]{height:44px;padding:4px}
+input[type=range]{accent-color:#7390ff}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}
+#fileInput{display:none}
+@media(min-width:600px){#pad{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
-<header><div><h1>Sound Pad</h1><div class="sub">タップして音声を重ねて再生</div></div><button class="action primary" id="addBtn">＋ 音声追加</button></header>
+<header>
+<div>
+<h1>Sound Pad</h1>
+<div class="sub">タップして音声を重ねて再生</div>
+</div>
+<button class="action primary" id="addBtn">＋ 音声追加</button>
+</header>
+
 <div class="toolbar">
 <button class="action" id="editBtn">配置・編集</button>
 <button class="action" id="stopBtn">■ すべて停止</button>
 <button class="action" id="sortBtn">並び替え解除</button>
 </div>
+
 <input id="fileInput" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac" multiple>
-<div id="pad"><div class="empty">「＋ 音声追加」から音声ファイルを選ぶと<br>ここに再生ボタンが作られます。</div></div>
+<div id="pad">
+<div class="empty">「＋ 音声追加」から音声ファイルを選ぶと<br>ここに再生ボタンが作られます。</div>
+</div>
 <div id="status"></div>
-<p class="note">音声はこの端末のブラウザ内に保存されます。複数のボタンを続けて押すと音声を重ねて再生できます。編集モードではボタンを長押しして並び替えできます。</p>
+<p class="note">音声はこの端末のブラウザ内に保存されます。複数のボタンを続けて押すと音声を重ねて再生できます。音量はボタンごとに調整できます。</p>
 
 <dialog id="editDialog">
 <h2>ボタンの設定</h2>
-<div class="field"><label for="nameInput">表示名</label><input id="nameInput" maxlength="40"></div>
-<div class="field"><label for="colorInput">ボタンの色</label><input id="colorInput" type="color" value="#526fe5"></div>
-<div class="field"><label for="volumeInput">音量</label><div class="volrow"><input id="volumeInput" type="range" min="0" max="100" value="100"><span id="volumeValue">100%</span></div></div>
-<div class="field"><label for="sizeInput">ボタンの大きさ</label><select id="sizeInput"><option value="normal">標準</option><option value="large">大きめ</option><option value="small">小さめ</option></select></div>
-<div class="dialog-actions"><button class="action" id="deleteBtn">削除</button><button class="action" id="cancelEdit">キャンセル</button><button class="action primary" id="saveEdit">保存</button></div>
+<div class="field">
+<label for="nameInput">表示名</label>
+<input id="nameInput" maxlength="40">
+</div>
+<div class="field">
+<label for="colorInput">ボタンの色</label>
+<input id="colorInput" type="color" value="#526fe5">
+</div>
+<div class="field">
+<label for="volumeInput">音量</label>
+<input id="volumeInput" type="range" min="0" max="100" value="100">
+<span id="volumeValue">100%</span>
+</div>
+<div class="field">
+<label for="sizeInput">ボタンの大きさ</label>
+<select id="sizeInput">
+<option value="normal">標準</option>
+<option value="large">大きめ</option>
+<option value="small">小さめ</option>
+</select>
+</div>
+<div class="dialog-actions">
+<button class="action" id="deleteBtn">削除</button>
+<button class="action" id="cancelEdit">キャンセル</button>
+<button class="action primary" id="saveEdit">保存</button>
+</div>
 </dialog>
 
 <script>
-const DB_NAME='soundpad-db', STORE='sounds';
-let db, sounds=[], editMode=false, editingId=null, playing=new Map(), looping=new Set();
+const DB_NAME='soundpad-db';
+const STORE='sounds';
+let db,sounds=[],editMode=false,editingId=null;
+let playing=new Map(),looping=new Set();
 const $=id=>document.getElementById(id);
-function openDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,1);req.onupgradeneeded=()=>req.result.createObjectStore(STORE,{keyPath:'id'});req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-function dbPut(item){return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(item);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}
-function dbDelete(id){return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(id);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}
-function dbAll(){return new Promise((res,rej)=>{const r=db.transaction(STORE).objectStore(STORE).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
-function saveOrder(){localStorage.setItem('soundpad-order',JSON.stringify(sounds.map(x=>x.id)))}
-function ordered(items){const ids=JSON.parse(localStorage.getItem('soundpad-order')||'[]');return [...items].sort((a,b)=>{let x=ids.indexOf(a.id),y=ids.indexOf(b.id);return (x<0?9999:x)-(y<0?9999:y)})}
+
+function openDB(){
+ return new Promise((resolve,reject)=>{
+  const req=indexedDB.open(DB_NAME,1);
+  req.onupgradeneeded=()=>req.result.createObjectStore(STORE,{keyPath:'id'});
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error);
+ });
+}
+
+function dbPut(item){
+ return new Promise((res,rej)=>{
+  const tx=db.transaction(STORE,'readwrite');
+  tx.objectStore(STORE).put(item);
+  tx.oncomplete=res;
+  tx.onerror=()=>rej(tx.error);
+ });
+}
+
+function dbDelete(id){
+ return new Promise((res,rej)=>{
+  const tx=db.transaction(STORE,'readwrite');
+  tx.objectStore(STORE).delete(id);
+  tx.oncomplete=res;
+  tx.onerror=()=>rej(tx.error);
+ });
+}
+
+function dbAll(){
+ return new Promise((res,rej)=>{
+  const r=db.transaction(STORE).objectStore(STORE).getAll();
+  r.onsuccess=()=>res(r.result);
+  r.onerror=()=>rej(r.error);
+ });
+}
+
+function saveOrder(){
+ localStorage.setItem('soundpad-order',JSON.stringify(sounds.map(x=>x.id)));
+}
+
+function ordered(items){
+ const ids=JSON.parse(localStorage.getItem('soundpad-order')||'[]');
+ return [...items].sort((a,b)=>{
+  let x=ids.indexOf(a.id),y=ids.indexOf(b.id);
+  return (x<0?9999:x)-(y<0?9999:y);
+ });
+}
+
 function render(){
- const pad=$('pad');pad.innerHTML='';
- if(!sounds.length){pad.innerHTML='<div class="empty">「＋ 音声追加」から音声ファイルを選ぶと<br>ここに再生ボタンが作られます。</div>';return}
- sounds.forEach((s)=>{
-  const wrap=document.createElement('div');wrap.className='padwrap';wrap.style.gridColumn=s.size==='large'?'span 2':'span 1';
-  const b=document.createElement('button');b.className='padbtn'+(editMode?' editing':'');
-  b.style.background=s.color||'#526fe5';b.style.width='100%';b.style.minHeight=s.size==='small'?'112px':s.size==='large'?'168px':'138px';
-  b.innerHTML=`<span class="mini">${editMode?'編集':'▶'}</span><span class="name"></span><span class="hint"></span>`;
-  b.querySelector('.name').textContent=s.name;b.querySelector('.hint').textContent=editMode?'タップして設定':'タップで再生';
-  b.addEventListener('click',()=>editMode?openEdit(s.id):play(s,false));wrap.appendChild(b);
+ const pad=$('pad');
+ pad.innerHTML='';
+
+ if(!sounds.length){
+  pad.innerHTML='<div class="empty">「＋ 音声追加」から音声ファイルを選ぶと<br>ここに再生ボタンが作られます。</div>';
+  return;
+ }
+
+ sounds.forEach(s=>{
+  const wrap=document.createElement('div');
+  wrap.className='padwrap';
+
+  const b=document.createElement('button');
+  b.className='padbtn'+(editMode?' editing':'');
+  b.style.background=s.color||'#526fe5';
+  b.style.minHeight=s.size==='small'?'115px':s.size==='large'?'175px':'145px';
+  b.innerHTML='<span class="mini"></span><span class="name"></span><span class="hint"></span>';
+  b.querySelector('.mini').textContent=editMode?'編集':'▶';
+  b.querySelector('.name').textContent=s.name;
+  b.querySelector('.hint').textContent=editMode?'タップして設定':'タップで再生';
+
+  b.addEventListener('click',()=>{
+   if(editMode)openEdit(s.id);
+   else{
+    stopAudio(s.id);
+    looping.delete(s.id);
+    playAudio(s,false);
+    render();
+   }
+  });
+
+  wrap.appendChild(b);
+
   if(!editMode){
-   // 音量バーを独立した段に配置し、ループ・停止ボタンと重ならないようにする
-   const volumeBox=document.createElement('div');volumeBox.className='tile-volume';
-   const volumeLabel=document.createElement('label');volumeLabel.textContent='音量';
-   const volumeOutput=document.createElement('output');volumeOutput.textContent=(s.volume??100)+'%';
-   const volumeSlider=document.createElement('input');volumeSlider.type='range';volumeSlider.min='0';volumeSlider.max='100';volumeSlider.step='1';volumeSlider.value=s.volume??100;volumeSlider.setAttribute('aria-label',s.name+'の音量');
-   volumeSlider.addEventListener('click',e=>e.stopPropagation());
-   volumeSlider.addEventListener('input',()=>{const v=Number(volumeSlider.value);s.volume=v;volumeOutput.textContent=v+'%';const active=playing.get(s.id);if(active)for(const a of active)a.volume=v/100;});
-   volumeSlider.addEventListener('change',()=>dbPut(s).catch(()=>{}));
-   volumeBox.append(volumeLabel,volumeOutput,volumeSlider);wrap.appendChild(volumeBox);
-   const controls=document.createElement('div');controls.className='padcontrols';
-   const loop=document.createElement('button');loop.textContent=looping.has(s.id)?'🔁 ループ中':'🔁 ループ';loop.className=looping.has(s.id)?'active':'';
-   loop.onclick=()=>{if(looping.has(s.id)){stopSound(s.id);looping.delete(s.id)}else{looping.add(s.id);play(s,true)}render()};
-   const stop=document.createElement('button');stop.textContent='■ 停止';stop.onclick=()=>{stopSound(s.id);looping.delete(s.id);render()};
-   controls.append(loop,stop);wrap.appendChild(controls);
+   const controls=document.createElement('div');
+   controls.className='padcontrols';
+
+   const loop=document.createElement('button');
+   loop.textContent=looping.has(s.id)?'🔁 ループ中':'🔁 ループ';
+   loop.className=looping.has(s.id)?'active':'';
+
+   loop.onclick=()=>{
+    if(looping.has(s.id)){
+     stopSound(s.id);
+    }else{
+     stopAudio(s.id);
+     looping.add(s.id);
+     playAudio(s,true);
+    }
+    render();
+   };
+
+   const stop=document.createElement('button');
+   stop.textContent='■ 停止';
+   stop.onclick=()=>{
+    stopSound(s.id);
+    render();
+   };
+
+   controls.append(loop,stop);
+   wrap.appendChild(controls);
+
+   const volumeBox=document.createElement('div');
+   volumeBox.className='volume-box';
+
+   const volumeHead=document.createElement('div');
+   volumeHead.className='volume-head';
+
+   const volumeLabel=document.createElement('span');
+   volumeLabel.textContent='音量';
+
+   const volumeValue=document.createElement('span');
+   volumeValue.textContent=(s.volume??100)+'%';
+
+   volumeHead.append(volumeLabel,volumeValue);
+
+   const slider=document.createElement('input');
+   slider.type='range';
+   slider.min='0';
+   slider.max='100';
+   slider.step='1';
+   slider.value=s.volume??100;
+   slider.setAttribute('aria-label',s.name+'の音量');
+
+   slider.addEventListener('input',()=>{
+    s.volume=Number(slider.value);
+    volumeValue.textContent=s.volume+'%';
+
+    const set=playing.get(s.id);
+    if(set){
+     for(const audio of set){
+      audio.volume=s.volume/100;
+     }
+    }
+    dbPut(s).catch(()=>{$('status').textContent='音量の保存に失敗しました。'});
+   });
+
+   volumeBox.append(volumeHead,slider);
+   wrap.appendChild(volumeBox);
   }
-  if(editMode){
-   let timer;
-   b.addEventListener('touchstart',()=>{timer=setTimeout(()=>{b.draggable=true;b.style.opacity='.6'},450)},{passive:true});
-   b.addEventListener('touchend',()=>clearTimeout(timer));
-   b.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',s.id));
-   b.addEventListener('dragover',e=>e.preventDefault());
-   b.addEventListener('drop',e=>{e.preventDefault();const from=e.dataTransfer.getData('text/plain');const arr=[...sounds];const fi=arr.findIndex(x=>x.id===from),ti=arr.findIndex(x=>x.id===s.id);if(fi>=0&&ti>=0){const [v]=arr.splice(fi,1);arr.splice(ti,0,v);sounds=arr;saveOrder();render()}});
-  }
+
   pad.appendChild(wrap);
  });
 }
-async function play(s,loop=false){
+
+function playAudio(s,loop=false){
  try{
-  stopSound(s.id);
-  const url=URL.createObjectURL(s.blob),audio=new Audio(url);audio.volume=(s.volume??100)/100;audio.loop=loop;
-  if(!playing.has(s.id))playing.set(s.id,new Set());playing.get(s.id).add(audio);
-  const cleanup=()=>{playing.get(s.id)?.delete(audio);if(playing.get(s.id)?.size===0)playing.delete(s.id);URL.revokeObjectURL(url);if(loop){looping.delete(s.id);render()}};
-  audio.addEventListener('ended',cleanup);audio.addEventListener('error',cleanup);audio.addEventListener('pause',()=>{if(audio.ended)cleanup()});
-  await audio.play();$('status').textContent=`再生中：${s.name}（音量 ${Math.round(audio.volume*100)}%）`;
- }catch(e){$('status').textContent='再生できませんでした。もう一度ボタンを押してください。'}
+  const url=URL.createObjectURL(s.blob);
+  const audio=new Audio(url);
+  audio.volume=(s.volume??100)/100;
+  audio.loop=loop;
+
+  if(!playing.has(s.id))playing.set(s.id,new Set());
+  playing.get(s.id).add(audio);
+
+  const cleanup=()=>{
+   playing.get(s.id)?.delete(audio);
+   if(playing.get(s.id)?.size===0)playing.delete(s.id);
+   URL.revokeObjectURL(url);
+   if(loop){
+    looping.delete(s.id);
+    render();
+   }
+  };
+
+  audio.addEventListener('ended',cleanup,{once:true});
+  audio.addEventListener('error',cleanup,{once:true});
+
+  audio.play().then(()=>{
+   $('status').textContent='再生中：'+s.name;
+  }).catch(()=>{
+   cleanup();
+   $('status').textContent='再生できませんでした。もう一度ボタンを押してください。';
+  });
+
+ }catch(e){
+  $('status').textContent='再生できませんでした。';
+ }
 }
-function stopSound(id){const set=playing.get(id);if(set){for(const a of set){a.pause();a.currentTime=0;const u=a.src;a.src='';if(u.startsWith('blob:'))URL.revokeObjectURL(u)}playing.delete(id)}looping.delete(id)}
+
+function stopAudio(id){
+ const set=playing.get(id);
+ if(set){
+  for(const a of set){
+   a.pause();
+   a.currentTime=0;
+   const u=a.src;
+   a.src='';
+   if(u.startsWith('blob:'))URL.revokeObjectURL(u);
+  }
+  playing.delete(id);
+ }
+}
+
+function stopSound(id){
+ stopAudio(id);
+ looping.delete(id);
+}
+
 $('addBtn').onclick=()=>$('fileInput').click();
+
 $('fileInput').onchange=async e=>{
- const files=[...e.target.files];for(const f of files){if(!f.type.startsWith('audio/')&&!/\.(mp3|wav|m4a|aac|ogg|flac)$/i.test(f.name))continue;
- const item={id:crypto.randomUUID(),name:f.name.replace(/\.[^.]+$/,''),blob:f,color:['#526fe5','#168c83','#b45a83','#a66a32','#6656a8','#387aab'][sounds.length%6],size:'normal'};
- await dbPut({...item,blob:f});sounds.push(item)}
- saveOrder();sounds=ordered(sounds);render();$('status').textContent=`${files.length} 件のファイルを追加しました。`;e.target.value='';
+ const files=[...e.target.files];
+
+ for(const f of files){
+  if(!f.type.startsWith('audio/')&&!/\.(mp3|wav|m4a|aac|ogg|flac)$/i.test(f.name))continue;
+
+  const item={
+   id:crypto.randomUUID(),
+   name:f.name.replace(/\.[^.]+$/,''),
+   blob:f,
+   color:['#526fe5','#168c83','#b45a83','#a66a32','#6656a8','#387aab'][sounds.length%6],
+   size:'normal',
+   volume:100
+  };
+
+  await dbPut(item);
+  sounds.push(item);
+ }
+
+ saveOrder();
+ sounds=ordered(sounds);
+ render();
+ $('status').textContent=files.length+' 件のファイルを追加しました。';
+ e.target.value='';
 };
-$('editBtn').onclick=()=>{editMode=!editMode;$('editBtn').textContent=editMode?'編集を終了':'配置・編集';render()};
-function openEdit(id){const s=sounds.find(x=>x.id===id);if(!s)return;editingId=id;$('nameInput').value=s.name;$('colorInput').value=s.color||'#526fe5';$('sizeInput').value=s.size||'normal';$('volumeInput').value=s.volume??100;$('volumeValue').textContent=(s.volume??100)+'%';$('editDialog').showModal()}
-$('volumeInput').oninput=()=>{$('volumeValue').textContent=$('volumeInput').value+'%'};
+
+$('editBtn').onclick=()=>{
+ editMode=!editMode;
+ $('editBtn').textContent=editMode?'編集を終了':'配置・編集';
+ render();
+};
+
+function openEdit(id){
+ const s=sounds.find(x=>x.id===id);
+ if(!s)return;
+
+ editingId=id;
+ $('nameInput').value=s.name;
+ $('colorInput').value=s.color||'#526fe5';
+ $('sizeInput').value=s.size||'normal';
+ $('volumeInput').value=s.volume??100;
+ $('volumeValue').textContent=(s.volume??100)+'%';
+ $('editDialog').showModal();
+}
+
+$('volumeInput').oninput=()=>{
+ $('volumeValue').textContent=$('volumeInput').value+'%';
+};
+
 $('cancelEdit').onclick=()=>$('editDialog').close();
-$('saveEdit').onclick=async()=>{const s=sounds.find(x=>x.id===editingId);if(!s)return;s.name=$('nameInput').value.trim()||'音声';s.color=$('colorInput').value;s.size=$('sizeInput').value;s.volume=Number($('volumeInput').value);await dbPut(s);$('editDialog').close();render()};
-$('deleteBtn').onclick=async()=>{if(!confirm('この音声ボタンを削除しますか？'))return;await dbDelete(editingId);sounds=sounds.filter(x=>x.id!==editingId);saveOrder();$('editDialog').close();render()};
-$('stopBtn').onclick=()=>{for(const id of [...playing.keys()])stopSound(id);looping.clear();render();$('status').textContent='すべて停止しました。'};
-$('sortBtn').onclick=()=>{localStorage.removeItem('soundpad-order');sounds.sort((a,b)=>a.name.localeCompare(b.name,'ja'));saveOrder();render()};
-(async()=>{try{db=await openDB();sounds=ordered(await dbAll());render()}catch(e){$('status').textContent='保存領域を開けませんでした。Safariで開き直してください。'}})();
-if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+$('saveEdit').onclick=async()=>{
+ const s=sounds.find(x=>x.id===editingId);
+ if(!s)return;
+
+ s.name=$('nameInput').value.trim()||'音声';
+ s.color=$('colorInput').value;
+ s.size=$('sizeInput').value;
+ s.volume=Number($('volumeInput').value);
+
+ const set=playing.get(s.id);
+ if(set){
+  for(const audio of set)audio.volume=s.volume/100;
+ }
+
+ await dbPut(s);
+ $('editDialog').close();
+ render();
+};
+
+$('deleteBtn').onclick=async()=>{
+ if(!confirm('この音声ボタンを削除しますか？'))return;
+ stopSound(editingId);
+ await dbDelete(editingId);
+ sounds=sounds.filter(x=>x.id!==editingId);
+ saveOrder();
+ $('editDialog').close();
+ render();
+};
+
+$('stopBtn').onclick=()=>{
+ for(const id of [...playing.keys()])stopSound(id);
+ looping.clear();
+ render();
+ $('status').textContent='すべて停止しました。';
+};
+
+$('sortBtn').onclick=()=>{
+ localStorage.removeItem('soundpad-order');
+ sounds.sort((a,b)=>a.name.localeCompare(b.name,'ja'));
+ saveOrder();
+ render();
+};
+
+(async()=>{
+ try{
+  db=await openDB();
+  sounds=ordered(await dbAll());
+  render();
+ }catch(e){
+  $('status').textContent='保存領域を開けませんでした。Safariで開き直してください。';
+ }
+})();
+
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+ navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
 </script>
-</body></html>
+</body>
+</html>
